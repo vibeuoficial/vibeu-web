@@ -1,13 +1,15 @@
 {
   "files": {
-    "main.css": "/vibeu-web/static/css/main.0d1b4f3f.css",
-    "main.js": "/vibeu-web/static/js/main.2467eb9d.js",
+    "main.css": "/vibeu-web/static/css/main.c7103aeb.css",
+    "main.js": "/vibeu-web/static/js/main.c182a50e.js",
+    "static/media/login-illustration.png": "/vibeu-web/static/media/login-illustration.16ac1b16e850b2987e15.png",
+    "static/media/google-icon.png": "/vibeu-web/static/media/google-icon.e12914ad8afda3f6f2e8.png",
     "index.html": "/vibeu-web/index.html",
-    "main.0d1b4f3f.css.map": "/vibeu-web/static/css/main.0d1b4f3f.css.map",
-    "main.2467eb9d.js.map": "/vibeu-web/static/js/main.2467eb9d.js.map"
+    "main.c7103aeb.css.map": "/vibeu-web/static/css/main.c7103aeb.css.map",
+    "main.c182a50e.js.map": "/vibeu-web/static/js/main.c182a50e.js.map"
   },
   "entrypoints": [
-    "static/css/main.0d1b4f3f.css",
-    "static/js/main.2467eb9d.js"
+    "static/css/main.c7103aeb.css",
+    "static/js/main.c182a50e.js"
   ]
 }
