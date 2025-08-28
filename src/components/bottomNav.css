@@ -1,0 +1,75 @@
+/* ===== Container principal do menu ===== */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: #fff;
+  border-top: 1px solid #eee;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 8px 0;
+  z-index: 1000;
+  box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.05);
+}
+
+/* ===== Cada item ===== */
+.nav-item {
+  background: none;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+  padding: 8px;
+  transition: all 0.2s ease;
+  color: #777;
+}
+
+/* ===== Ativo ===== */
+.nav-item.active {
+  color: #6a11cb; /* roxo destaque */
+  transform: scale(1.2);
+  text-shadow: 0 0 8px rgba(106, 17, 203, 0.3);
+}
+
+/* ===== Efeito hover ===== */
+.nav-item:hover {
+  color: #b91377; /* rosa hover */
+}
+
+/* ===== Mobile ===== */
+@media (max-width: 768px) {
+  .bottom-nav {
+    font-size: 20px;
+    padding: 10px 0;
+  }
+}
+
+.badge {
+  position: absolute;
+  top: 2px;
+  right: 6px;
+  background: #b91377;
+  color: white;
+  border-radius: 50%;
+  padding: 2px 6px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+
+.badge {
+  position: absolute;
+  top: 2px;
+  right: 6px;
+  background: #b91377;
+  color: white;
+  border-radius: 50%;
+  padding: 2px 6px;
+  font-size: 11px;
+  font-weight: 600;
+  min-width: 18px;
+  text-align: center;
+  line-height: 16px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+}

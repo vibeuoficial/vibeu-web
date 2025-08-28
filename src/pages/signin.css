@@ -1,0 +1,103 @@
+/* Estilo só para a página de login */
+.signin-page {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #7d3cff, #5a27b6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+.signin-container {
+  background: white;
+  padding: 40px;
+  border-radius: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  text-align: center;
+  width: 350px;
+  max-width: 90%;
+}
+
+.logo {
+  font-size: 28px;
+  color: #7d3cff;
+  margin-bottom: 10px;
+}
+
+.subtitle {
+  color: #666;
+  margin-bottom: 20px;
+}
+
+button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border-radius: 8px;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+button:hover {
+  transform: scale(1.03);
+}
+
+.google-btn {
+  border: 1px solid #ccc;
+  background: white;
+  color: black;
+}
+
+.google-btn img {
+  width: 18px;
+  height: 18px;
+}
+
+.apple-btn {
+  background: black;
+  color: white;
+}
+
+.apple-btn img {
+  width: 18px;
+  height: 18px;
+}
+
+/* 👇 Corrige a imagem gigante */
+.signin-container img.illustration {
+  margin-top: 20px;
+  width: 280px;
+  height: auto;
+  max-width: 100%;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Responsivo */
+@media (max-width: 480px) {
+  .signin-container {
+    width: 90%;
+    padding: 20px;
+  }
+
+  .logo {
+    font-size: 22px;
+  }
+
+  .subtitle {
+    font-size: 14px;
+  }
+
+  button {
+    font-size: 14px;
+    padding: 10px;
+  }
+}

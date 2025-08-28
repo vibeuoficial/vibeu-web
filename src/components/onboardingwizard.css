@@ -1,0 +1,136 @@
+/* Estilo só para a página de onboarding */
+.onboarding-page {
+  background: #f9f9f9;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.onboarding-container {
+  max-width: 500px;
+  width: 100%;
+  margin: auto;
+  background: #fff;
+  padding: 30px;
+  border-radius: 16px;
+  box-shadow: 0px 4px 12px rgba(0,0,0,0.1);
+  text-align: center;
+  font-family: "Segoe UI", sans-serif;
+}
+
+.progress {
+  height: 6px;
+  background: #eee;
+  border-radius: 4px;
+  margin-bottom: 20px;
+}
+
+.progress-bar {
+  height: 6px;
+  background: linear-gradient(135deg, #7a00ff, #a74cff);
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+.step h2 {
+  color: #5a189a;
+  margin-bottom: 20px;
+}
+
+.step input,
+.step select {
+  width: 100%;
+  padding: 12px;
+  margin: 8px 0;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.languages {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 12px 0;
+}
+
+.chip {
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1px solid #a74cff;
+  color: #a74cff;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.chip.selected {
+  background: linear-gradient(135deg, #7a00ff, #a74cff);
+  color: #fff;
+}
+
+.buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.buttons button {
+  background: linear-gradient(135deg, #7a00ff, #a74cff);
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.buttons button:hover {
+  background: linear-gradient(135deg, #6a00e6, #9400ff);
+}
+
+.buttons button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+  .onboarding-container {
+    max-width: 90%;
+    padding: 20px;
+  }
+
+  .step h2 {
+    font-size: 18px;
+  }
+
+  .step input,
+  .step select {
+    font-size: 13px;
+    padding: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .onboarding-container {
+    padding: 16px;
+  }
+
+  .step h2 {
+    font-size: 16px;
+  }
+
+  .chip {
+    padding: 5px 10px;
+    font-size: 13px;
+  }
+
+  .buttons button {
+    padding: 8px 14px;
+    font-size: 13px;
+  }
+}

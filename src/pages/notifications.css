@@ -1,0 +1,51 @@
+.notifications-container {
+  max-width: 600px;
+  margin: 30px auto;
+  padding: 20px;
+  font-family: "Inter", sans-serif;
+}
+
+.notification-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  margin-bottom: 12px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  transition: background 0.2s ease;
+}
+
+.notification-card.unread {
+  background: #f4f0ff;
+}
+
+.notif-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.notif-link {
+  color: #6a11cb;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.notif-link:hover {
+  text-decoration: underline;
+  color: #b91377;
+}
+
+.notif-date {
+  font-size: 12px;
+  color: #999;
+}
+
+.empty {
+  text-align: center;
+  color: #777;
+  margin-top: 20px;
+}
