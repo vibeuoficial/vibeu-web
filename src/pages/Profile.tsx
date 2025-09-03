@@ -90,28 +90,40 @@ export default function Profile({ user }: ProfileProps) {
     });
   };
 
-  // Carregar posts do user logado
+  // Carregar posts do user logado (versão manual)
   useEffect(() => {
     const fetchMyPosts = async () => {
-      const { data, error } = await supabase
+      const { data: rawPosts, error } = await supabase
         .from("posts")
-        .select(`
-          id,
-          content,
-          created_at,
-          profiles (id, name, university, avatar_url),
-          likes(user_id)
-        `)
+        .select("id, content, created_at, author_id")
         .eq("author_id", user.id)
         .order("created_at", { ascending: false });
 
-      if (!error && data) {
-        setMyPosts(
-          data.map((p: any) => ({
-            ...p,
-            profiles: Array.isArray(p.profiles) ? p.profiles[0] : p.profiles,
-          }))
+      if (!error && rawPosts) {
+        const enriched = await Promise.all(
+          rawPosts.map(async (p: any) => {
+            const { data: profile } = await supabase
+              .from("profiles")
+              .select("id, name, university, avatar_url")
+              .eq("id", p.author_id)
+              .single();
+
+            const { data: likes } = await supabase
+              .from("likes")
+              .select("user_id")
+              .eq("post_id", p.id);
+
+            return {
+              id: p.id,
+              content: p.content,
+              created_at: p.created_at,
+              profiles: profile || null,
+              likes: likes || [],
+            };
+          })
         );
+
+        setMyPosts(enriched);
       }
     };
     fetchMyPosts();
@@ -183,23 +195,16 @@ export default function Profile({ user }: ProfileProps) {
       )}
 
       <div className="profile-card">
-        {/* Avatar */}
         <img
           src={avatarUrl || "/default-avatar.png"}
           alt={user.name}
           className="profile-avatar"
         />
-
-        {/* Infos principais */}
         <div className="profile-basic">
           <h2>{user.name}</h2>
-          {sessionUserId === user.id && (
-            <p className="email">{user.email}</p>
-          )}
+          {sessionUserId === user.id && <p className="email">{user.email}</p>}
           <p className="uni">@{user.university}</p>
         </div>
-
-        {/* Infos extras */}
         <div className="profile-info">
           <p><strong>📚 Curso:</strong> {user.course || "-"}</p>
           <p><strong>🎂 Data de nascimento:</strong> {formatDate(user.birthdate)}</p>
@@ -207,19 +212,15 @@ export default function Profile({ user }: ProfileProps) {
         </div>
       </div>
 
-      {/* Postagens do usuário */}
       <div className="my-posts">
         <h3>📌 Minhas postagens</h3>
         {myPosts.length === 0 ? (
           <p>Você ainda não publicou nada.</p>
         ) : (
-          myPosts.map((post) => (
-            <PostItem key={post.id} post={post} userId={user.id} />
-          ))
+          myPosts.map((post) => <PostItem key={post.id} post={post} />)
         )}
       </div>
 
-      {/* Modal de edição - só aparece para o dono */}
       {sessionUserId === user.id && showModal && (
         <div className="modal">
           <div className="modal-content">
@@ -242,7 +243,6 @@ export default function Profile({ user }: ProfileProps) {
               onChange={(e) => setEditUniversity(e.target.value)}
               placeholder="Universidade"
             />
-
             <label className="upload-label">
               Alterar foto:
               <input
@@ -251,7 +251,6 @@ export default function Profile({ user }: ProfileProps) {
                 onChange={(e) => setEditAvatar(e.target.files?.[0] || null)}
               />
             </label>
-
             <div className="modal-actions">
               <button className="save" onClick={handleSave}>Salvar</button>
               <button className="cancel" onClick={() => setShowModal(false)}>Cancelar</button>

@@ -7,6 +7,9 @@ export default function Signin({ onLogin }: { onLogin: (user: any) => void }) {
   const handleLogin = async (provider: "google" | "apple") => {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider,
+      options: {
+        redirectTo: window.location.origin, // 👈 garante login local + produção
+      },
     });
 
     if (error) {

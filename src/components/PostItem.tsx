@@ -26,18 +26,29 @@ interface Post {
 
 interface PostItemProps {
   post: Post;
-  userId: string;
 }
 
-export default function PostItem({ post, userId }: PostItemProps) {
+export default function PostItem({ post }: PostItemProps) {
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState("");
   const [likes, setLikes] = useState(post.likes?.length || 0);
-  const [liked, setLiked] = useState(
-    post.likes?.some((l) => l.user_id === userId) || false
-  );
+  const [liked, setLiked] = useState(false);
   const [showComments, setShowComments] = useState(false);
   const navigate = useNavigate();
+
+  // inicializa se o user já curtiu
+  useEffect(() => {
+    const checkLiked = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (user) {
+        const alreadyLiked = post.likes?.some((l) => l.user_id === user.id);
+        setLiked(alreadyLiked);
+      }
+    };
+    checkLiked();
+  }, [post.likes]);
 
   // carregar comentários
   useEffect(() => {
@@ -66,33 +77,47 @@ export default function PostItem({ post, userId }: PostItemProps) {
 
   // curtir / descurtir
   const handleLike = async () => {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) return;
+
+    const uid = user.id;
+    console.log("👍 handleLike → post_id:", post.id, "user_id:", uid);
+
     if (liked) {
       // remover like
-      await supabase
+      const { error } = await supabase
         .from("likes")
         .delete()
         .eq("post_id", post.id)
-        .eq("user_id", userId);
+        .eq("user_id", uid);
 
-      setLikes(likes - 1);
+      if (error) console.error("Erro ao remover like:", error.message);
+
+      setLikes((prev) => prev - 1);
       setLiked(false);
     } else {
       // verifica se já existe
-      const { data: existing } = await supabase
+      const { data: existing, error: checkError } = await supabase
         .from("likes")
         .select("id")
         .eq("post_id", post.id)
-        .eq("user_id", userId)
+        .eq("user_id", uid)
         .maybeSingle();
+
+      if (checkError) console.error("Erro ao verificar like:", checkError.message);
 
       if (!existing) {
         const { error } = await supabase.from("likes").insert({
           post_id: post.id,
-          user_id: userId,
+          user_id: uid,
         });
 
-        if (!error) {
-          setLikes(likes + 1);
+        if (error) {
+          console.error("Erro ao inserir like:", error.message);
+        } else {
+          setLikes((prev) => prev + 1);
           setLiked(true);
         }
       }
@@ -103,11 +128,19 @@ export default function PostItem({ post, userId }: PostItemProps) {
   const handleComment = async () => {
     if (!newComment.trim()) return;
 
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) return;
+
+    const uid = user.id;
+    console.log("💬 handleComment → post_id:", post.id, "user_id:", uid);
+
     const { data, error } = await supabase
       .from("comments")
       .insert({
         post_id: post.id,
-        user_id: userId,
+        user_id: uid,
         content: newComment,
       })
       .select(`
@@ -125,6 +158,8 @@ export default function PostItem({ post, userId }: PostItemProps) {
       };
       setComments([...comments, formatted as Comment]);
       setNewComment("");
+    } else if (error) {
+      console.error("Erro ao comentar:", error.message);
     }
   };
 

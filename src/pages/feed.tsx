@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { supabase } from "../supabase";
 import PostItem from "../components/PostItem";
-import BottomNav from "../components/BottomNav"; // 👈 importa o menu
+import BottomNav from "../components/BottomNav";
 import "./feed.css";
 
 interface Profile {
@@ -28,34 +28,46 @@ export default function Feed({ user }: FeedProps) {
   const [loading, setLoading] = useState(true);
   const [newPost, setNewPost] = useState("");
 
-  // carregar posts
+  // 🔄 carrega posts + likes do banco
+  const fetchPosts = async () => {
+    const { data, error } = await supabase
+      .from("posts")
+      .select("id, content, created_at, author_id")
+      .order("created_at", { ascending: false });
+
+    if (!error && data) {
+      const enriched = await Promise.all(
+        data.map(async (p: any) => {
+          const { data: profile } = await supabase
+            .from("profiles")
+            .select("id, name, university, avatar_url")
+            .eq("id", p.author_id)
+            .single();
+
+          const { data: likes } = await supabase
+            .from("likes")
+            .select("user_id")
+            .eq("post_id", p.id);
+
+          return {
+            id: p.id,
+            content: p.content,
+            created_at: p.created_at,
+            profiles: profile || null,
+            likes: likes || [],
+          } as Post;
+        })
+      );
+      setPosts(enriched);
+    }
+    setLoading(false);
+  };
+
   useEffect(() => {
-    const fetchPosts = async () => {
-      const { data, error } = await supabase
-        .from("posts")
-        .select(`
-          id,
-          content,
-          created_at,
-          profiles (id, name, university, avatar_url),
-          likes(user_id)
-        `)
-        .order("created_at", { ascending: false });
-
-      if (!error && data) {
-        const formatted = data.map((p: any) => ({
-          ...p,
-          profiles:
-            p.profiles && Array.isArray(p.profiles) ? p.profiles[0] : p.profiles,
-        }));
-        setPosts(formatted as Post[]);
-      }
-      setLoading(false);
-    };
-
     fetchPosts();
   }, []);
 
+  // publicar novo post
   const handlePublish = async () => {
     if (!newPost.trim()) return;
 
@@ -65,31 +77,36 @@ export default function Feed({ user }: FeedProps) {
         content: newPost,
         author_id: user.id,
       })
-      .select(`
-        id,
-        content,
-        created_at,
-        profiles (id, name, university, avatar_url),
-        likes(user_id)
-      `)
+      .select("id, content, created_at, author_id")
       .single();
 
     if (!error && data) {
-      const normalized = {
-        ...data,
-        profiles:
-          data.profiles && Array.isArray(data.profiles)
-            ? data.profiles[0]
-            : data.profiles,
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("id, name, university, avatar_url")
+        .eq("id", data.author_id)
+        .single();
+
+      const { data: likes } = await supabase
+        .from("likes")
+        .select("user_id")
+        .eq("post_id", data.id);
+
+      const newFormatted: Post = {
+        id: data.id,
+        content: data.content,
+        created_at: data.created_at,
+        profiles: profile || null,
+        likes: likes || [],
       };
-      setPosts([normalized as Post, ...posts]);
+
+      setPosts([newFormatted, ...posts]);
       setNewPost("");
     }
   };
 
   return (
     <div className="feed-container">
-      {/* Cabeçalho */}
       <div className="feed-header">
         <h1>VibeU</h1>
         <div className="user-info">
@@ -107,7 +124,6 @@ export default function Feed({ user }: FeedProps) {
         </div>
       </div>
 
-      {/* Novo post */}
       <div className="new-post">
         <textarea
           placeholder="Compartilhe algo..."
@@ -117,18 +133,14 @@ export default function Feed({ user }: FeedProps) {
         <button onClick={handlePublish}>Publicar</button>
       </div>
 
-      {/* Lista de posts */}
       {loading ? (
         <p>Carregando...</p>
       ) : posts.length === 0 ? (
         <p>Seja o primeiro a postar 🎉</p>
       ) : (
-        posts.map((post) => (
-          <PostItem key={post.id} post={post} userId={user.id} />
-        ))
+        posts.map((post) => <PostItem key={post.id} post={post} />)
       )}
 
-      {/* Menu fixo no rodapé */}
       <BottomNav />
     </div>
   );
